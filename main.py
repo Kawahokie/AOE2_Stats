@@ -6,16 +6,30 @@ response = requests.get("https://aoe2.net/api/matches?game=aoe2de&since=16587252
 print(response.status_code)
 #print(response.json())
 
-data = response.json()
-print(data)
-with open('data.json', 'w') as f:
-    json.dump(data, f)
+# data = response.json()
+# print(data)
+# with open('data.json', 'w') as f:
+#     json.dump(data, f)
 
 with open('data.json') as json_file:
     datafile = json.load(json_file)
 
-print(datafile[0]['players'][0]['civ'])
+# print(datafile[0]['match_id'])
+# print(datafile[0]['name'])
+# print(datafile[0]['version'])
+# print(datafile[0]['num_players'])
+# print(datafile[0]['map_type'])
+# print(datafile[0]['game_type'])
+# print(datafile[0]['leaderboard_id'])
+# print(datafile[0]['players'][0]['name'], datafile[0]['players'][0]['rating'], datafile[0]['players'][0]['team'], datafile[0]['players'][0]['civ'], datafile[0]['players'][0]['won'])
 
+for game in datafile:
+    for player in game['players']:
+        print(game['match_id'], game['name'], game['version'], game['num_players'], game['map_type'], game['game_type'], game['leaderboard_id'], player['name'], player['rating'], player['team'], player['civ'], player['won'])
+
+# Data to grab: match_id, name, version, num_players, 
+# map_type, game_type, leaderboard_id, 
+# players:(name, rating, team, civ, won)
 
 # Opening JSON file and loading the data
 # into the variable data
@@ -31,29 +45,3 @@ print(datafile[0]['players'][0]['civ'])
 #     writer.writeheader()
 #     for row in data:
 #         writer.writerow(row)
-
-######## Attempt 2
-# employee_data = data['emp_details']
- 
-# # now we will open a file for writing
-# data_file = open('data_file.csv', 'w')
- 
-# # create the csv writer object
-# csv_writer = csv.writer(data_file)
- 
-# # Counter variable used for writing
-# # headers to the CSV file
-# count = 0
- 
-# for emp in employee_data:
-#     if count == 0:
- 
-#         # Writing headers of CSV file
-#         header = emp.keys()
-#         csv_writer.writerow(header)
-#         count += 1
- 
-#     # Writing data of CSV file
-#     csv_writer.writerow(emp.values())
- 
-# data_file.close()
