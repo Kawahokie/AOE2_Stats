@@ -1,0 +1,8 @@
+match_id,name,version,num_players,map_type,game_type,leaderboard_id,rating_type,player_name,elo,team,civ,won
+171862841,AUTOMATCH,63581,4,Black Forest,Random Map,Team Random Map,Team Random Map,ChakramThrower,1290,1,Malay,0
+171862841,AUTOMATCH,63581,4,Black Forest,Random Map,Team Random Map,Team Random Map,Jasee_wrath,1084,2,Mongols,1
+171862841,AUTOMATCH,63581,4,Black Forest,Random Map,Team Random Map,Team Random Map,Sam,1142,1,Teutons,0
+171862841,AUTOMATCH,63581,4,Black Forest,Random Map,Team Random Map,Team Random Map,Andy.HotSummer,1243,2,Burgundians,1
+171862840,AUTOMATCH,63581,2,Arena,Random Map,1v1 Random Map,1v1 Random Map,LordZooK25,725,1,Bohemians,0
+171862840,AUTOMATCH,63581,2,Arena,Random Map,1v1 Random Map,1v1 Random Map,Kilmer17,751,2,Teutons,1
+171862842,AUTOMATCH,63581,6,Arena,Random Map,Team Random Map,Team Random Map,Vox Infinitum,941,1,Vikings,0
