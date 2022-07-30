@@ -23,9 +23,10 @@ with open('data.json') as json_file:
     datafile = json.load(json_file)
 
 for game in datafile:
-    column = []
+    
     for player in game['players']:
         if game['rating_type'] == 2 or game['rating_type'] == 4:
+            column = []
             column.append(game['match_id'])
             column.append(game['name'])
             column.append(game['version'])
@@ -42,7 +43,7 @@ for game in datafile:
             column.append(1 if player['won']==True else 0)
             statlist.append(column)
             # statdata = game['match_id'], game['name'], game['version'], game['num_players'], notes_list['map_type'][game['map_type']-9]['string'], notes_list['game_type'][game['game_type']]['string'], notes_list['leaderboard'][game['leaderboard_id']]['string'], notes_list['rating_type'][game['rating_type']]['string'], player['name'], player['rating'], player['team'], notes_list['civ'][player['civ']-1]['string'], 1 if player['won']==True else 0
-            print(column)
+            # print(column)
             # writer.writerow(statdata)
             
 
