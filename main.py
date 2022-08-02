@@ -6,25 +6,27 @@ import os.path
 from os import path
 
 
-stats_Filename = "Stats.csv"
+stats_Filename = "Stats.csv" # Init
 statlist=[]
+counter = 0
 with open('notes.json') as json_file:
     notes_list = json.load(json_file)
 
 
-def mapLookup(mapNum):
+def mapLookup(mapNum): # Convert map number to map name
     for x in notes_list['map_type']:
         if x['id'] == mapNum:
             return x['string']
     return 'None'
 
-def checkMatchTime(endTime):
-    if datafile['finished'] >= endTime:
+def checkMatchTime(endTime): # Have we reached the selected time
+    print(statlist[-1][0])
+    if statlist[-1][0] >= endTime:
         return True
     else:
         return False
 
-def getData(since=1658725251,count=1):
+def getData(since=1658725251,count=1): # Get data from API
     base_url = "https://aoe2.net/api/matches?game=aoe2de"
     url = "".join([base_url,"&since=",str(since),"&count=",str(count)])
     
@@ -39,20 +41,20 @@ def getData(since=1658725251,count=1):
     
     return datafile
 
-def processData(datafile,notes_list):
+def processData(datafile,notes_list): # Load stats file
     for game in datafile:
     
         for player in game['players']:
             if game['rating_type'] == 2 or game['rating_type'] == 4:
                 column = []
-                column.append(game['finished'])
+                column.append(game['started'])
                 column.append(game['match_id'])
                 column.append(game['name'])
                 column.append(game['version'])
                 column.append(game['num_players'])
                 column.append(mapLookup(game['map_type']))
                 # column.append(notes_list['map_type'][game['map_type']]['string'])
-                column.append(notes_list['game_type'][game['game_type']]['string'])
+                # column.append(notes_list['game_type'][game['game_type']]['string'])
                 column.append(notes_list['leaderboard'][game['leaderboard_id']]['string'])
                 column.append(notes_list['rating_type'][game['rating_type']]['string'])
                 column.append(player['name'])
@@ -66,13 +68,29 @@ def processData(datafile,notes_list):
                 # writer.writerow(statdata)
     return
 
-def printData():
-    if not path.exists(stats_Filename):
+def printHeader():
+    if not path.exists(stats_Filename): # Load Header and Print to csv
         with open(stats_Filename, 'a', newline='') as f:
             writer=csv.writer(f)
-            headerdata = "Match_Date", "match_id", "name", "version", "num_players", "map_type", "game_type", "leaderboard_id", "rating_type", "player_name", "elo", "team", "civ", "won"
+            headerdata = []
+            headerdata.append("Match_Date")
+            headerdata.append("match_id")
+            headerdata.append("name")
+            headerdata.append("version")
+            headerdata.append("num_players")
+            headerdata.append("Map")
+            headerdata.append("leaderboard_id")
+            headerdata.append("rating_type")
+            headerdata.append("player_name")
+            headerdata.append("elo")
+            headerdata.append("team")
+            headerdata.append("civ")
+            headerdata.append("won")
             writer.writerow(headerdata)
+    return
 
+def printData():
+    # Print Data
     with open(stats_Filename, 'a', newline='', encoding='utf-8-sig') as f:
         writer=csv.writer(f)
         writer.writerows(statlist)
@@ -80,10 +98,23 @@ def printData():
     return
 
 # response = requests.get("https://aoe2.net/api/matches?game=aoe2de&since=1658725251&count=100")
-datafile = getData(1658725251,1000) #Epoch Time for last game, number of requests at a time
+startDate = 1659186000
+endDate = 1659189600
+gamesPerRequest = 1000 #limite <= 1000
 
-processData(datafile,notes_list)     
+while True:
+    counter += 1
+    datafile = getData(startDate,gamesPerRequest) #Epoch Time for first game, number of requests at a time
+    processData(datafile,notes_list)
+    #1659189600
+    if checkMatchTime(endDate): #Set End Window for game times
+        break
+    else:
+        startDate=statlist[-1][0]
+    if counter == 10:
+        break
 
+printHeader()
 printData()
 
 
