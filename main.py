@@ -1,17 +1,26 @@
 from fnmatch import fnmatchcase
+from http import client
 import requests
 import json
 import csv
 import os.path
 from os import path
 
+import logging
+import http.client
+http.client.HTTPConnection.debuglevel =1
+logging.basicConfig()
+logging.getLogger().setLevel(logging.DEBUG)
+requests_log = logging.getLogger("requests.packages.urllib3")
+requests_log.setLevel(logging.DEBUG)
+requests_log.propagate = True
 
 stats_Filename = "Stats.csv" # Init
 statlist=[]
 counter = 0
 with open('notes.json') as json_file:
     notes_list = json.load(json_file)
-
+urlSession = requests.Session()
 
 def mapLookup(mapNum): # Convert map number to map name
     for x in notes_list['map_type']:
@@ -29,8 +38,8 @@ def checkMatchTime(endTime): # Have we reached the selected time
 def getData(since=1658725251,count=1): # Get data from API
     base_url = "https://aoe2.net/api/matches?game=aoe2de"
     url = "".join([base_url,"&since=",str(since),"&count=",str(count)])
-    
-    response = requests.get(url)
+    # response = requests.get(url)
+    response = urlSession.get(url)
     print(response.status_code)
 
     data = response.json()
@@ -100,7 +109,7 @@ def printData():
 # response = requests.get("https://aoe2.net/api/matches?game=aoe2de&since=1658725251&count=100")
 startDate = 1659186000
 endDate = 1659189600
-gamesPerRequest = 1000 #limite <= 1000
+gamesPerRequest = 1000 #limit <= 1000
 
 while True:
     counter += 1
@@ -110,7 +119,7 @@ while True:
     if checkMatchTime(endDate): #Set End Window for game times
         break
     else:
-        startDate=statlist[-1][0]
+        startDate=statlist[-1][0]+1
     if counter == 10:
         break
 
