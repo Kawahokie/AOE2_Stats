@@ -6,14 +6,16 @@ import csv
 import os.path
 from os import path
 
-import logging
-import http.client
-http.client.HTTPConnection.debuglevel =1
-logging.basicConfig()
-logging.getLogger().setLevel(logging.DEBUG)
-requests_log = logging.getLogger("requests.packages.urllib3")
-requests_log.setLevel(logging.DEBUG)
-requests_log.propagate = True
+import pycurl
+
+# import logging
+# import http.client
+# http.client.HTTPConnection.debuglevel =1
+# logging.basicConfig()
+# logging.getLogger().setLevel(logging.DEBUG)
+# requests_log = logging.getLogger("requests.packages.urllib3")
+# requests_log.setLevel(logging.DEBUG)
+# requests_log.propagate = True
 
 stats_Filename = "Stats.csv" # Init
 statlist=[]
@@ -34,6 +36,16 @@ def checkMatchTime(endTime): # Have we reached the selected time
         return True
     else:
         return False
+
+def useCurl(since=1658725251,count=1):
+    base_url = "https://aoe2.net/api/matches?game=aoe2de"
+    url = "".join([base_url,"&since=",str(since),"&count=",str(count)])
+    with open('out.html', 'wb') as f:
+        c = pycurl.Curl()
+        c.setopt(c.URL, url)
+        c.setopt(c.WRITEDATA, f)
+        c.perform()
+        c.close()
 
 def getData(since=1658725251,count=1): # Get data from API
     base_url = "https://aoe2.net/api/matches?game=aoe2de"
