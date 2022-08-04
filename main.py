@@ -6,6 +6,7 @@ import csv
 import os.path
 from os import path
 
+import time
 import pycurl # Not used
 from forcediphttpsadapter.adapters import ForcedIPHTTPSAdapter  # Not used
 
@@ -62,6 +63,7 @@ def getData(since=1658725251,count=1): # Get data from API
     # response = requests.get(url)
     # headers = {"User-Agent": "Chrome/81.0.4044.141"}
     headers={'Host': 'aoe2.net', "User-Agent": "Chrome/81.0.4044.141"}
+    # time.sleep(8) # Helps with request time - Max time between requests seems to be around 7 seconds - Request reponse takes ~7 seconds
     response = urlSession.get(url, headers=headers, verify=False)
     print(response.status_code)
 
