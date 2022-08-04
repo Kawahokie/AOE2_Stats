@@ -6,7 +6,8 @@ import csv
 import os.path
 from os import path
 
-import pycurl
+import pycurl # Not used
+from forcediphttpsadapter.adapters import ForcedIPHTTPSAdapter  # Not used
 
 # import logging
 # import http.client
@@ -48,10 +49,20 @@ def useCurl(since=1658725251,count=1):
         c.close()
 
 def getData(since=1658725251,count=1): # Get data from API
-    base_url = "https://aoe2.net/api/matches?game=aoe2de"
+
+    # base_url2 = "/api/matches?game=aoe2de"   # Doesn't help
+    # url2 = "".join([base_url,"&since=",str(since),"&count=",str(count)])
+    # urlSession.mount("https://aoe2.net", ForcedIPHTTPSAdapter(dest_ip='107.178.98.244'))
+    # response = urlSession.get(url2, headers={'Host': 'aoe2.net'}, verify=False)
+
+    base_url = "https://107.178.98.244/api/matches?game=aoe2de"
+    # base_url = "https://aoe2.net/api/matches?game=aoe2de"
     url = "".join([base_url,"&since=",str(since),"&count=",str(count)])
+
     # response = requests.get(url)
-    response = urlSession.get(url)
+    # headers = {"User-Agent": "Chrome/81.0.4044.141"}
+    headers={'Host': 'aoe2.net', "User-Agent": "Chrome/81.0.4044.141"}
+    response = urlSession.get(url, headers=headers, verify=False)
     print(response.status_code)
 
     data = response.json()
@@ -74,7 +85,6 @@ def processData(datafile,notes_list): # Load stats file
                 column.append(game['version'])
                 column.append(game['num_players'])
                 column.append(mapLookup(game['map_type']))
-                # column.append(notes_list['map_type'][game['map_type']]['string'])
                 # column.append(notes_list['game_type'][game['game_type']]['string'])
                 column.append(notes_list['leaderboard'][game['leaderboard_id']]['string'])
                 column.append(notes_list['rating_type'][game['rating_type']]['string'])
@@ -125,9 +135,11 @@ gamesPerRequest = 1000 #limit <= 1000
 
 while True:
     counter += 1
+    # useCurl() # Doesn't help
+    # print(counter)
+
     datafile = getData(startDate,gamesPerRequest) #Epoch Time for first game, number of requests at a time
     processData(datafile,notes_list)
-    #1659189600
     if checkMatchTime(endDate): #Set End Window for game times
         break
     else:
