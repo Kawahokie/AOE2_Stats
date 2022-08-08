@@ -3,12 +3,44 @@ from http import client
 import requests
 import json
 import csv
+import myCal
 import os.path
 from os import path
+# from tkinter import *
 
 import time
 import pycurl # Not used
 from forcediphttpsadapter.adapters import ForcedIPHTTPSAdapter  # Not used
+
+# try:
+#     import tkinter as tk
+#     from tkinter import ttk
+# except ImportError:
+#     import Tkinter as tk
+#     import ttk
+
+# from tkcalendar import Calendar, DateEntry
+
+# def example1():
+#     def print_sel():
+#         print(cal.selection_get())
+
+#     top = tk.Toplevel(root)
+
+#     cal = Calendar(top,
+#                    font="Arial 14", selectmode='day',
+#                    cursor="hand1", year=2018, month=2, day=5)
+#     cal.pack(fill="both", expand=True)
+#     ttk.Button(top, text="ok", command=print_sel).pack()
+
+# def example2():
+#     top = tk.Toplevel(root)
+
+#     ttk.Label(top, text='Choose date').pack(padx=10, pady=10)
+
+#     cal = DateEntry(top, width=12, background='darkblue',
+#                     foreground='white', borderwidth=2)
+#     cal.pack(padx=10, pady=10)
 
 # import logging
 # import http.client
@@ -131,9 +163,25 @@ def printData():
     return
 
 # response = requests.get("https://aoe2.net/api/matches?game=aoe2de&since=1658725251&count=100")
-startDate = 1659186000
-endDate = 1659189600
+
+# startDate = 1659186000
+# endDate = 1659189600
+startDate = myCal.getMyCal(0,"Choose Start Date")
+endDate = myCal.getMyCal(1,"Choose End Date")
 gamesPerRequest = 1000 #limit <= 1000
+
+# window=Tk()
+# window.title('Hello Python')
+# window.geometry("300x200+10+20")
+# window.mainloop()
+
+# root = tk.Tk()
+# s = ttk.Style(root)
+# s.theme_use('clam')
+
+# ttk.Button(root, text='Calendar', command=example1).pack(padx=10, pady=10)
+# ttk.Button(root, text='DateEntry', command=example2).pack(padx=10, pady=10)
+# root.mainloop()
 
 while True:
     counter += 1
@@ -147,6 +195,7 @@ while True:
     else:
         startDate=statlist[-1][0]+1
     if counter == 10:
+        print("Ending because too many requests. ",counter)
         break
 
 printHeader()
