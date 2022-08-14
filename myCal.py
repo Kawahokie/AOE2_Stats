@@ -3,7 +3,7 @@ from tkcalendar import *
 import datetime
 
 def getMyCal(hour=0,title_Text="default"):
-    # ws = Tk()
+    ws = Tk()
     ws = Toplevel(ws)
     ws.title("New Window")
     ws.geometry("280x380")
