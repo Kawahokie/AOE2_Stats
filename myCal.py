@@ -4,12 +4,8 @@ import datetime
 
 def getMyCal(hour=0,title_Text="default"):
     ws = Tk()
-    ws = Toplevel(ws)
-    ws.title("New Window")
+    ws.title(title_Text)
     ws.geometry("280x380")
-    Label(ws, text ="This is a new window").pack()
-    # ws.title(title_Text)
-    # ws.geometry("280x380")
     ws.config(bg="#cd950c")
 
     hour_string=StringVar(value=hour)

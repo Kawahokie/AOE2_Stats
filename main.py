@@ -74,7 +74,7 @@ def getData(since=1658725251,count=1): # Get data from API
     # response = requests.get(url)
     # headers = {"User-Agent": "Chrome/81.0.4044.141"}
     headers={'Host': 'aoe2.net', "User-Agent": "Chrome/81.0.4044.141"}
-    response = urlSession.get(url, headers=headers, verify=True)
+    response = urlSession.get(url, headers=headers, verify=False)
     print(response.status_code)
 
     data = response.json()
