@@ -2,7 +2,7 @@ from tkinter import *
 from tkcalendar import *
 import datetime
 
-def getMyCal(Tk,hour=0,title_Text="default"):
+def getMyCal(hour=0,title_Text="default"):
     # ws = Tk()
     ws = Toplevel(ws)
     ws.title("New Window")

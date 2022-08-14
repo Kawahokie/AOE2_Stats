@@ -10,8 +10,8 @@ from tkinter import *
 
 
 import time
-import pycurl # Not used
-from forcediphttpsadapter.adapters import ForcedIPHTTPSAdapter  # Not used
+# import pycurl # Not used
+# from forcediphttpsadapter.adapters import ForcedIPHTTPSAdapter  # Not used
 
 # from tkcalendar import Calendar, DateEntry
 
