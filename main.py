@@ -7,22 +7,9 @@ import myCal
 import os.path
 from os import path
 from tkinter import *
-
-
+import random
+import datetime
 import time
-# import pycurl # Not used
-# from forcediphttpsadapter.adapters import ForcedIPHTTPSAdapter  # Not used
-
-# from tkcalendar import Calendar, DateEntry
-
-# import logging
-# import http.client
-# http.client.HTTPConnection.debuglevel =1
-# logging.basicConfig()
-# logging.getLogger().setLevel(logging.DEBUG)
-# requests_log = logging.getLogger("requests.packages.urllib3")
-# requests_log.setLevel(logging.DEBUG)
-# requests_log.propagate = True
 
 stats_Filename = "Stats.csv" # Init
 statlist=[]
@@ -40,7 +27,7 @@ def mapLookup(mapNum): # Convert map number to map name
     return 'None'
 
 def checkMatchTime(endTime): # Have we reached the selected time
-    print(statlist[-1][0])
+    print(statlist[-1][0]," ",datetime.datetime.fromtimestamp(statlist[-1][0]).strftime('%c'))
     if statlist[-1][0] >= endTime:
         return True
     else:
@@ -217,7 +204,7 @@ while True:
         if checkMatchTime(endDate): #Set End Window for game times
             break
         else:
-            startDate=statlist[-1][0]+1
+            startDate=(statlist[-1][0])+random.randint(1, 5)
     else:
         print("Ending due to fault.")
         break

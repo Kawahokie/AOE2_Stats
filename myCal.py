@@ -122,4 +122,3 @@ def getMyCal(hour=0,title_Text="default"):
 
 def getMyCalTest():
     print(getMyCal())
-
