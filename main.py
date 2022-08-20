@@ -10,15 +10,87 @@ from tkinter import *
 import random
 import datetime
 import time
+import tkinter as tk
+import threading
+from queue import Queue
 
 stats_Filename = "Stats.csv" # Init
 statlist=[]
 counter = 0
 startDate = 1659186000
 endDate = 1659189600
+
 with open('notes.json') as json_file:
     notes_list = json.load(json_file)
 urlSession = requests.Session()
+
+class App(threading.Thread):
+
+    def __init__(self):
+        threading.Thread.__init__(self)
+        self.start()
+
+    def callback(self):
+        self.root.quit()
+    
+    def eventhandler(evt):  # runs in main thread
+        print('Event Thread',threading.get_ident())   # event thread id (same as main)
+        print(evt.state)  # 123, data from event
+        string = datetime.datetime.now().strftime('%I:%M:%S %p')
+        # lbl.config(text=string)  # update widget
+        #txtvar.set(' '*15 + str(evt.state))  # update text entry in main thread
+        
+    def run(self):
+        self.root=tk.Tk()
+        lbl1a=tk.Label(self.root, text='Start Date:')
+        lbl1b=tk.Label(self.root, text=dispStartDate)
+        lbl1c=tk.Label(self.root, text=datetime.datetime.fromtimestamp(dispStartDate).strftime('%c'))
+        lbl2a=tk.Label(self.root, text='End Date:')
+        lbl2b=tk.Label(self.root, text=endDate)
+        lbl2c=tk.Label(self.root, text=datetime.datetime.fromtimestamp(endDate).strftime('%c'))
+        lbl3a=tk.Label(self.root, text='Last Received Date:')
+        lbl3b=tk.Label(self.root, text=startDate)
+        lbl3c=tk.Label(self.root, text=datetime.datetime.fromtimestamp(startDate).strftime('%c'))
+        lbl1a.grid(row = 0, column = 0, sticky = W, pady = 2)
+        lbl1b.grid(row = 0, column = 1, sticky = W, pady = 2)
+        lbl1c.grid(row = 0, column = 2, sticky = W, pady = 2)
+        lbl2a.grid(row = 1, column = 0, sticky = W, pady = 2)
+        lbl2b.grid(row = 1, column = 1, sticky = W, pady = 2)
+        lbl2c.grid(row = 1, column = 2, sticky = W, pady = 2)
+        lbl3a.grid(row = 3, column = 0, sticky = W, pady = 2)
+        lbl3b.grid(row = 3, column = 1, sticky = W, pady = 2)
+        lbl3c.grid(row = 3, column = 2, sticky = W, pady = 2)
+
+        lbl4a=tk.Label(self.root, text='Requests Made:')
+        lbl4b=tk.Label(self.root, text=counter)
+        lbl5a=tk.Label(self.root, text='Matches Received:')
+        lbl5b=tk.Label(self.root, text=(counter-1)*1000)
+        lbl4a.grid(row = 4, column = 0, sticky = W, pady = 2)
+        lbl4b.grid(row = 4, column = 1, sticky = W, pady = 2)
+        lbl5a.grid(row = 5, column = 0, sticky = W, pady = 2)
+        lbl5b.grid(row = 5, column = 1, sticky = W, pady = 2)
+    # def startDate(self):
+    #     startDate = myCal.getMyCal(self.Tk(),0,"Choose Start Date")
+    #     print(startDate)
+    #     self.t3.delete(0, 'end')
+    #     self.t3.insert(END, str(startDate))
+    # def endDate(self):
+    #     endDate = myCal.getMyCal(self.Tk(),1,"Choose End Date")
+    #     self.t3.delete(0, 'end')
+    #     self.t3.insert(END, str(endDate))
+
+
+    # mywin=MyWindow(window)
+        self.root.title('AoE2 Map Stats')
+        self.root.geometry("400x300+10+10")
+        # self.root = tk.Tk()
+        self.root.protocol("WM_DELETE_WINDOW", self.callback)
+
+        # label = tk.Label(self.root, text="Hello World")
+        # label.pack()
+        self.root.bind("<<event1>>", self.eventhandler)
+        self.root.mainloop()
+
 
 def mapLookup(mapNum): # Convert map number to map name
     for x in notes_list['map_type']:
@@ -33,19 +105,6 @@ def checkMatchTime(endTime): # Have we reached the selected time
     else:
         return False
 
-# def useCurl(since=1658725251,count=1):
-#     base_url = "https://aoe2.net/api/matches?game=aoe2de"
-#     url = "".join([base_url,"&since=",str(since),"&count=",str(count)])
-#     with open('out.html', 'wb') as f:
-#         c = pycurl.Curl()
-#         c.setopt(c.URL, url)
-#         c.setopt(c.WRITEDATA, f)
-#     try:
-#         c.perform()
-#         c.close()
-#     except pycurl.error as exc:
-#         return "Unable to reach %s (%s)" % (url, exc)
-
 
 def getData(since=1658725251,count=1): # Get data from API
 
@@ -54,15 +113,14 @@ def getData(since=1658725251,count=1): # Get data from API
     # urlSession.mount("https://aoe2.net", ForcedIPHTTPSAdapter(dest_ip='107.178.98.244'))
     # response = urlSession.get(url2, headers={'Host': 'aoe2.net'}, verify=False)
 
-    base_url = "https://107.178.98.244/api/matches?game=aoe2de"
-    # base_url = "https://aoe2.net/api/matches?game=aoe2de"
+    # base_url = "https://107.178.98.244/api/matches?game=aoe2de"
+    base_url = "https://aoe2.net/api/matches?game=aoe2de"
     url = "".join([base_url,"&since=",str(since),"&count=",str(count)])
 
-    # response = requests.get(url)
-    # headers = {"User-Agent": "Chrome/81.0.4044.141"}
-    headers={'Host': 'aoe2.net', "User-Agent": "Chrome/81.0.4044.141"}
-    response = urlSession.get(url, headers=headers, verify=False)
-    print(response.status_code)
+    # headers={'Host': 'aoe2.net', "User-Agent": "Chrome/81.0.4044.141"}
+    # response = urlSession.get(url, headers=headers, verify=False)
+    response = urlSession.get(url)
+    # print(response.status_code)
 
     data = response.json()
     with open('data.json', 'w') as f:
@@ -80,14 +138,14 @@ def processData(datafile,notes_list): # Load stats file
                 column = []
                 column.append(game['started'])
                 column.append(game['match_id'])
-                column.append(game['name'])
+                # column.append(game['name'])
                 column.append(game['version'])
                 column.append(game['num_players'])
                 column.append(mapLookup(game['map_type']))
                 # column.append(notes_list['game_type'][game['game_type']]['string'])
-                column.append(notes_list['leaderboard'][game['leaderboard_id']]['string'])
+                # column.append(notes_list['leaderboard'][game['leaderboard_id']]['string'])
                 column.append(notes_list['rating_type'][game['rating_type']]['string'])
-                column.append(player['name'])
+                # column.append(player['name'])
                 column.append(player['rating'])
                 column.append(player['team'])
                 column.append(notes_list['civ'][player['civ']-1]['string'])
@@ -105,13 +163,13 @@ def printHeader():
             headerdata = []
             headerdata.append("Match_Date")
             headerdata.append("match_id")
-            headerdata.append("name")
+            # headerdata.append("name")
             headerdata.append("version")
             headerdata.append("num_players")
             headerdata.append("Map")
-            headerdata.append("leaderboard_id")
+            # headerdata.append("leaderboard_id")
             headerdata.append("rating_type")
-            headerdata.append("player_name")
+            # headerdata.append("player_name")
             headerdata.append("elo")
             headerdata.append("team")
             headerdata.append("civ")
@@ -129,71 +187,63 @@ def printData():
 
 # response = requests.get("https://aoe2.net/api/matches?game=aoe2de&since=1658725251&count=100")
 
-# class MyWindow:
-#     def __init__(self, win):
-#         self.lbl1=Label(win, text='First number')
-#         self.lbl2=Label(win, text='Second number')
-#         self.lbl3=Label(win, text='Result')
-#         self.t1=Entry(bd=3)
-#         self.t2=Entry()
-#         self.t3=Entry()
-#         self.btn1 = Button(win, text='Choose Start Date')
-#         self.btn2=Button(win, text='Choose End Date')
-#         self.lbl1.place(x=100, y=50)
-#         self.t1.place(x=200, y=50)
-#         self.lbl2.place(x=100, y=100)
-#         self.t2.place(x=200, y=100)
-#         self.b1=Button(win, text='Choose Start Date', command=self.startDate)
-#         self.b2=Button(win, text='Choose End Date', command=self.endDate)
-#         self.b1.place(x=100, y=150)
-#         self.b2.place(x=250, y=150)
-#         self.lbl3.place(x=100, y=200)
-#         self.t3.place(x=200, y=200)
-#     def startDate(self):
-#         startDate = myCal.getMyCal(self.Tk(),0,"Choose Start Date")
-#         print(startDate)
-#         self.t3.delete(0, 'end')
-#         self.t3.insert(END, str(startDate))
-#     def endDate(self):
-#         endDate = myCal.getMyCal(self.Tk(),1,"Choose End Date")
-#         self.t3.delete(0, 'end')
-#         self.t3.insert(END, str(endDate))
+class MyWindow:
+    def __init__(self, win):
+        self.lbl1a=Label(win, text='Start Date:')
+        self.lbl1b=Label(win, textvariable=dispStartDate)
+        self.lbl1c=Label(win, textvariable=datetime.datetime.fromtimestamp(dispStartDate).strftime('%c'))
+        self.lbl2a=Label(win, text='End Date:')
+        self.lbl2b=Label(win, textvariable=endDate)
+        self.lbl2c=Label(win, textvariable=datetime.datetime.fromtimestamp(endDate).strftime('%c'))
+        self.lbl3a=Label(win, text='Last Received Date:')
+        self.lbl3b=Label(win, textvariable=startDate)
+        self.lbl3c=Label(win, textvariable=datetime.datetime.fromtimestamp(startDate).strftime('%c'))
+        self.lbl1a.grid(row = 0, column = 0, sticky = W, pady = 2)
+        self.lbl1b.grid(row = 0, column = 1, sticky = W, pady = 2)
+        self.lbl1c.grid(row = 0, column = 2, sticky = W, pady = 2)
+        self.lbl2a.grid(row = 1, column = 0, sticky = W, pady = 2)
+        self.lbl2b.grid(row = 1, column = 1, sticky = W, pady = 2)
+        self.lbl2c.grid(row = 1, column = 2, sticky = W, pady = 2)
+        self.lbl3a.grid(row = 3, column = 0, sticky = W, pady = 2)
+        self.lbl3b.grid(row = 3, column = 1, sticky = W, pady = 2)
+        self.lbl3c.grid(row = 3, column = 2, sticky = W, pady = 2)
 
-# window=Tk()
-# mywin=MyWindow(window)
-# window.title('Hello Python')
-# window.geometry("400x300+10+10")
-# window.mainloop()
-
-
-## btn = Button(window, text='OK')
-## btn.bind('<Button-1>', MyButtonClicked)
-## btn = Button(window, text='OK', command=myCal.getMyCal(0,"Choose Start Date"))
-## btn.pack(pady=10)
-## Btn = Button(window,text="title_Text",padx=10,pady=10,command=myCal.getMyCal(0,"Choose Start Date"))
-## btn.place(x=80, y=100)
-
+        self.lbl4a=Label(win, text='Requests Made:')
+        self.lbl4b=Label(win, textvariable=counter)
+        self.lbl5a=Label(win, text='Matches Received:')
+        self.lbl5b=Label(win, textvariable=(counter-1)*1000)
+        self.lbl4a.grid(row = 4, column = 0, sticky = W, pady = 2)
+        self.lbl4b.grid(row = 4, column = 1, sticky = W, pady = 2)
+        self.lbl5a.grid(row = 5, column = 0, sticky = W, pady = 2)
+        self.lbl5b.grid(row = 5, column = 1, sticky = W, pady = 2)
+    
 # startDate = 1659186000
 # endDate = 1659189600
 startDate = myCal.getMyCal(0,"Choose Start Date")
 endDate = myCal.getMyCal(1,"Choose End Date")
 gamesPerRequest = 1000 #limit <= 1000
+dispStartDate = startDate
 
-# root = tk.Tk()
-# s = ttk.Style(root)
-# s.theme_use('clam')
+window=Tk()
+mywin=MyWindow(window)
+window.title('AoE2 Map Stats')
+window.geometry("400x300+10+10")
+# window.update()
 
-# ttk.Button(root, text='Calendar', command=example1).pack(padx=10, pady=10)
-# ttk.Button(root, text='DateEntry', command=example2).pack(padx=10, pady=10)
-# root.mainloop()
-
+starttime = time.time()
+lasttime = starttime
+# app = App()
+# def getData():
 while True:
-    counter += 1
-    # useCurl() # Doesn't help
-    # print(counter)
+    laptime = round((time.time() - lasttime), 2)
+    totaltime = round((time.time() - starttime), 2)
+    print("Last Request Time: "+str(laptime))
+    print("Total Time: "+str(totaltime))
+    lasttime = time.time()
 
+    counter += 1
     try:
-        print(counter)
+        print(counter, "Requesting...")
         Success = True
         datafile = getData(startDate,gamesPerRequest) #Epoch Time for first game, number of requests at a time
     except requests.exceptions.RequestException as e:  # This is the correct syntax
@@ -208,6 +258,8 @@ while True:
     else:
         print("Ending due to fault.")
         break
+
+# window.mainloop()
 
 printHeader()
 printData()
