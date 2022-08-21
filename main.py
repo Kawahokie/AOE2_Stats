@@ -135,25 +135,27 @@ def processData(datafile,notes_list): # Load stats file
     
         for player in game['players']:
             if game['rating_type'] == 2 or game['rating_type'] == 4:
-                column = []
-                column.append(game['started'])
-                column.append(game['match_id'])
-                # column.append(game['name'])
-                column.append(game['version'])
-                column.append(game['num_players'])
-                column.append(mapLookup(game['map_type']))
-                # column.append(notes_list['game_type'][game['game_type']]['string'])
-                # column.append(notes_list['leaderboard'][game['leaderboard_id']]['string'])
-                column.append(notes_list['rating_type'][game['rating_type']]['string'])
-                # column.append(player['name'])
-                column.append(player['rating'])
-                column.append(player['team'])
-                column.append(notes_list['civ'][player['civ']-1]['string'])
-                column.append(1 if player['won']==True else 0)
-                statlist.append(column)
-                # statdata = game['match_id'], game['name'], game['version'], game['num_players'], notes_list['map_type'][game['map_type']-9]['string'], notes_list['game_type'][game['game_type']]['string'], notes_list['leaderboard'][game['leaderboard_id']]['string'], notes_list['rating_type'][game['rating_type']]['string'], player['name'], player['rating'], player['team'], notes_list['civ'][player['civ']-1]['string'], 1 if player['won']==True else 0
-                # print(column)
-                # writer.writerow(statdata)
+                if player['rating'] > 950:
+                    if player['civ'].isnumeric():
+                        column = []
+                        column.append(game['started'])
+                        column.append(game['match_id'])
+                        # column.append(game['name'])
+                        column.append(game['version'])
+                        column.append(game['num_players'])
+                        column.append(mapLookup(game['map_type']))
+                        # column.append(notes_list['game_type'][game['game_type']]['string'])
+                        # column.append(notes_list['leaderboard'][game['leaderboard_id']]['string'])
+                        column.append(notes_list['rating_type'][game['rating_type']]['string'])
+                        # column.append(player['name'])
+                        column.append(player['rating'])
+                        column.append(player['team'])
+                        column.append(notes_list['civ'][player['civ']-1]['string'])
+                        column.append(1 if player['won']==True else 0)
+                        statlist.append(column)
+                        # statdata = game['match_id'], game['name'], game['version'], game['num_players'], notes_list['map_type'][game['map_type']-9]['string'], notes_list['game_type'][game['game_type']]['string'], notes_list['leaderboard'][game['leaderboard_id']]['string'], notes_list['rating_type'][game['rating_type']]['string'], player['name'], player['rating'], player['team'], notes_list['civ'][player['civ']-1]['string'], 1 if player['won']==True else 0
+                        # print(column)
+                        # writer.writerow(statdata)
     return
 
 def printHeader():
@@ -250,11 +252,15 @@ while True:
         Success = False
     
     if (Success):
-        processData(datafile,notes_list)
-        if checkMatchTime(endDate): #Set End Window for game times
+        try:
+            processData(datafile,notes_list)
+            if checkMatchTime(endDate): #Set End Window for game times
+                break
+            else:
+                startDate=(statlist[-1][0])+random.randint(1, 5)
+        except:
+            print("Ending due to fault.")
             break
-        else:
-            startDate=(statlist[-1][0])+random.randint(1, 5)
     else:
         print("Ending due to fault.")
         break
